@@ -12,3 +12,6 @@ install:
   - go get github.com/onsi/gomega
   - go get github.com/onsi/ginkgo/ginkgo
 script: ginkgo -r .
+notifications:
+  webhooks:
+    - http://pulse.pivotallabs.com/projects/14abc717-cae4-423d-a451-6ba23d4474bd/status
