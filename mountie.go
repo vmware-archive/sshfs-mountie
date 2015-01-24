@@ -16,8 +16,8 @@ func main() {
 	bindings := GetAllBindings()
 	for _, binding := range bindings {
 		bindCommands = append(bindCommands, CreateCommand(binding))
+		fmt.Printf("Discovered SSHFS binding for instance %s", binding.Name)
 	}
-	fmt.Printf("Found %d bindings to SSHFS service", len(bindings))
 
 	if len(bindings) > 0 {
 		err := RunCommands(bindCommands)
