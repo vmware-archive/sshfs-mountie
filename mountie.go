@@ -17,10 +17,14 @@ func main() {
 	for _, binding := range bindings {
 		bindCommands = append(bindCommands, CreateCommand(binding))
 	}
+	fmt.Printf("Found %d bindings to SSHFS service", len(bindings))
 
-	err := RunCommands(bindCommands)
-	if err != nil {
-		panic(err)
+	if len(bindings) > 0 {
+		err := RunCommands(bindCommands)
+		if err != nil {
+			panic(err)
+		}
+		fmt.Printf("Finished mounting SSHFS file systems")
 	}
 }
 
