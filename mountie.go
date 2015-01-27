@@ -2,29 +2,22 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"strconv"
 	"strings"
 )
 
 func main() {
-	var bindCommands []*exec.Cmd
-
-	bindings := GetAllBindings()
-	for _, binding := range bindings {
-		bindCommands = append(bindCommands, CreateCommand(binding))
-		fmt.Printf("Discovered SSHFS binding for instance %s", binding.Name)
-	}
-
-	if len(bindings) > 0 {
-		err := RunCommands(bindCommands)
+	for _, binding := range GetAllBindings() {
+		mountPoint, err := MakeMountPoint(binding)
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("Finished mounting SSHFS file systems")
+		RunCommand(CreateCommand(binding))
+		fmt.Printf("Mounted SSHFS filesystem for service instance %s into %s", binding.Name, mountPoint)
 	}
 }
 
@@ -42,14 +35,25 @@ type Binding struct {
 }
 
 func GetAllBindings() []Binding {
-	sshfsBindings := make(map[string][]Binding)
+	sshfsBindings := map[string][]Binding{}
 	jsonString := os.Getenv("VCAP_SERVICES")
 
 	err := json.Unmarshal([]byte(jsonString), &sshfsBindings)
 	if err != nil {
 		panic("Unable to decode JSON in env var VCAP_SERVICES")
 	}
+
 	return sshfsBindings["sshfs"]
+}
+
+func MakeMountPoint(binding Binding) (mountPath string, err error) {
+	currentPath, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	mountPath = path.Join(currentPath, binding.Name)
+	err = os.Mkdir(mountPath, 0777)
+	return mountPath, err
 }
 
 func CreateCommand(binding Binding) *exec.Cmd {
@@ -67,16 +71,10 @@ func CreateCommand(binding Binding) *exec.Cmd {
 	return cmd
 }
 
-func RunCommands(commands []*exec.Cmd) error {
-	for _, command := range commands {
-		commandOutput, err := command.CombinedOutput()
-		if err != nil {
-			return errors.New(fmt.Sprintf(
-				"Failed while running %s : %s : %s",
-				command,
-				commandOutput,
-				err.Error()))
-		}
+func RunCommand(command *exec.Cmd) error {
+	commandOutput, err := command.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("Failed while running %s : %s : %s", command, commandOutput, err)
 	}
 
 	return nil

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"path"
 
 	. "github.com/pivotal-cf/sshfs-mountie"
 
@@ -15,10 +16,6 @@ import (
 var _ = Describe("Mountie", func() {
 	BeforeEach(func() {
 		os.Setenv("VCAP_SERVICES", VCAP_SERVICES)
-	})
-
-	AfterEach(func() {
-		os.Setenv("VCAP_SERVICES", `{}`)
 	})
 
 	Describe("Getting bindings from the environment", func() {
@@ -52,6 +49,33 @@ var _ = Describe("Mountie", func() {
 		})
 	})
 
+	Describe("Making a mount point for a binding", func() {
+		Context("when the mount point can be created", func() {
+			It("returns the name of the created directed", func() {
+				workingDir, _ := os.Getwd()
+				binding := Binding{Name: "my-sshfs-instance"}
+
+				mountPoint, err := MakeMountPoint(binding)
+				Expect(err).NotTo(HaveOccurred())
+				Expect(mountPoint).To(Equal(path.Join(workingDir, "my-sshfs-instance")))
+
+				fileInfo, err := os.Stat(mountPoint)
+				Expect(err).To(Succeed())
+				Expect(fileInfo.IsDir()).To(BeTrue())
+
+				os.Remove(mountPoint)
+			})
+		})
+
+		Context("when the mount point cannot be created", func() {
+			It("returns an error", func() {
+				binding := Binding{Name: string(0)}
+				_, err := MakeMountPoint(binding)
+				Expect(err.Error()).To(ContainSubstring("invalid argument"))
+			})
+		})
+	})
+
 	Describe("Generating shell command to call sshfs client binary", func() {
 		It("returns the correct command struct when given a Binding", func() {
 			binding := Binding{
@@ -77,28 +101,16 @@ var _ = Describe("Mountie", func() {
 		})
 	})
 
-	Describe("running commands", func() {
-		Context("when all commands succeed", func() {
-			It("returns a nil error", func() {
-				cmds := []*exec.Cmd{
-					exec.Command("echo", "hello"),
-					exec.Command("echo", "world"),
-				}
-
-				err := RunCommands(cmds)
-
-				Expect(err).NotTo(HaveOccurred())
+	Describe("running a command", func() {
+		Context("when the command succeeds", func() {
+			It("returns nil", func() {
+				Expect(RunCommand(exec.Command("echo", "hello"))).To(Succeed())
 			})
 		})
-		Context("if one of the commands failed", func() {
-			It("returns the error", func() {
-				cmds := []*exec.Cmd{
-					exec.Command("/bin/bash", "-c", "echo success && exit 0"),
-					exec.Command("/bin/bash", "-c", "echo mounting failed because your network is down && exit 3"),
-				}
 
-				err := RunCommands(cmds)
-
+		Context("if the command fails", func() {
+			It("returns an error", func() {
+				err := RunCommand(exec.Command("/bin/bash", "-c", "echo mounting failed because your network is down && exit 3"))
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(ContainSubstring("mounting failed because your network is down"))
 			})
