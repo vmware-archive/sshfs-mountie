@@ -17,7 +17,7 @@ func main() {
 			panic(err)
 		}
 		RunCommand(CreateCommand(binding))
-		fmt.Printf("Mounted SSHFS filesystem for service instance %s into %s", binding.Name, mountPoint)
+		fmt.Printf("Mounted SSHFS filesystem for service instance %s into %s\n", binding.Name, mountPoint)
 	}
 }
 
@@ -74,7 +74,7 @@ func CreateCommand(binding Binding) *exec.Cmd {
 func RunCommand(command *exec.Cmd) error {
 	commandOutput, err := command.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("Failed while running %s : %s : %s", command, commandOutput, err)
+		return fmt.Errorf("failed while running %s : %s : %s", command, commandOutput, err)
 	}
 
 	return nil
