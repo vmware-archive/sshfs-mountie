@@ -97,7 +97,7 @@ var _ = Describe("Mountie", func() {
 
 			Expect(string(password)).To(Equal("some-password\n"))
 			Expect(sshfsMountCommand.Args).To(Equal([]string{"sshfs", fmt.Sprintf("%s@%s:", binding.Credentials.User, binding.Credentials.Host), "-p", "499",
-				"-o", "password_stdin", "-o", "StrictHostKeyChecking=false", binding.Name}))
+				"-o", "password_stdin", "-o", "StrictHostKeyChecking=false", "-o", "reconnect", binding.Name}))
 		})
 	})
 

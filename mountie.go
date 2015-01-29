@@ -63,6 +63,7 @@ func CreateCommand(binding Binding) *exec.Cmd {
 		"-p", strconv.Itoa(binding.Credentials.Port),
 		"-o", "password_stdin",
 		"-o", "StrictHostKeyChecking=false",
+		"-o", "reconnect",
 		binding.Name,
 	)
 
