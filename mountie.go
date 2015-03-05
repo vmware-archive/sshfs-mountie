@@ -64,6 +64,7 @@ func CreateCommand(binding Binding) *exec.Cmd {
 		"-o", "password_stdin",
 		"-o", "StrictHostKeyChecking=false",
 		"-o", "reconnect",
+		"-o", "sshfs_debug",
 		binding.Name,
 	)
 
