@@ -63,6 +63,9 @@ var _ = Describe("Mountie", func() {
 				Expect(err).To(Succeed())
 				Expect(fileInfo.IsDir()).To(BeTrue())
 
+				_, err = MakeMountPoint(binding)
+				Expect(err).NotTo(HaveOccurred())
+
 				os.Remove(mountPoint)
 			})
 		})

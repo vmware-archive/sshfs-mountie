@@ -52,7 +52,7 @@ func MakeMountPoint(binding Binding) (mountPath string, err error) {
 		return "", err
 	}
 	mountPath = path.Join(currentPath, binding.Name)
-	err = os.Mkdir(mountPath, 0777)
+	err = os.MkdirAll(mountPath, 0777)
 	return mountPath, err
 }
 
