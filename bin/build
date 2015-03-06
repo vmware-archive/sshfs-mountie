@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+# Append binary data.
+cat mount.sh.in >mount.sh
+echo "PAYLOAD:" >> mount.sh
+
+curl "http://stedolan.github.io/jq/download/linux64/jq" -s | gzip | base64 >>mount.sh
+
+chmod +x mount.sh

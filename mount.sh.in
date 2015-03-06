@@ -1,0 +1,25 @@
+#!/bin/bash
+VCAP_HOME=/home/vcap
+TMP_DIR=${VCAP_HOME}/tmp
+JQ_BIN=${TMP_DIR}/jq
+MOUNTIE_BIN=${TMP_DIR}/mountie
+FS_PATH=${VCAP_HOME}/filesystems
+
+mkdir -p ${TMP_DIR}
+
+SCRIPT="${BASH_SOURCE[${#BASH_SOURCE[@]} - 1]}"
+MATCH=$(grep --text --line-number '^PAYLOAD:$' $SCRIPT | cut -d ':' -f 1)
+PAYLOAD_START=$((MATCH + 1))
+tail -n +$PAYLOAD_START $SCRIPT | base64 --decode | gunzip >${JQ_BIN}
+chmod +x ${JQ_BIN}
+
+BROKER_HOST=`echo ${VCAP_SERVICES} | ${JQ_BIN} '.sshfs[0].credentials.host' | tr -d '"'`
+
+curl -s ${BROKER_HOST}/assets/mountie -o ${MOUNTIE_BIN}
+chmod +x ${MOUNTIE_BIN}
+
+( mkdir -p ${FS_PATH} && cd ${FS_PATH} && ${MOUNTIE_BIN} )
+
+rm -rf ${TMP_DIR}
+
+return 0
