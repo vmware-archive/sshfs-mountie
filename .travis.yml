@@ -15,3 +15,11 @@ script: ginkgo -r .
 notifications:
   webhooks:
     - http://pulse.pivotallabs.com/projects/14abc717-cae4-423d-a451-6ba23d4474bd/status
+deploy:
+  provider: releases
+  api_key:
+    secure: "EGJEma21kfbIum0F5hTff1pN1g1cRrthQqQgqwxWYg/E8Q5VrYnRWtrKs9jVy3nOkCiRxRPtcrgjEURwqFa9FLe+ATx7v81vfDin3vkxCsUmw2mUm3a7wnrtHPq7OZLBwXs+kDqyf/WO3H3E/MVzLGzuEj7EzxJJ0gSper+FAyY="
+  file: "mount.sh"
+  skip_cleanup: true
+  on:
+    tags: true
