@@ -23,11 +23,8 @@ To use mountie with a CF app that you've already started:
    cd my-app
    mkdir -p .profile.d
    ```
-4. Place the mount.sh script from the [`latest release`](https://github.com/pivotal-cf/sshfs-mountie/releases/latest) in `.profile.d/mount.sh`.
+4. Download the `mount.sh` file from the [`latest release`](https://github.com/pivotal-cf/sshfs-mountie/releases/latest) and place it in your application's `.profile.d/mount.sh`.
 
-   ```bash
-   curl -o .profile.d/mount.sh https://github.com/pivotal-cf/sshfs-mountie/releases/download/[RELEASE NAME]/mount.sh
-   ```
 5. Push your app.
 
    ```bash
