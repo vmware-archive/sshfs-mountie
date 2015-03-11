@@ -16,7 +16,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		RunCommand(CreateCommand(binding))
+		err = RunCommand(CreateCommand(binding))
+		if err != nil {
+			panic(err)
+		}
 		fmt.Printf("Mounted SSHFS filesystem for service instance %s into %s\n", binding.Name, mountPoint)
 	}
 }
