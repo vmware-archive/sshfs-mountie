@@ -8,8 +8,8 @@ To use mountie with a CF app that you've already started:
 1. Create service instances for your desired filesystems.
 
    ```
-   cf create-service sshfs 1gb my-web-content
-   cf create-service sshfs 1gb my-internal-content
+   cf create-service sshfs Unlimited my-web-content
+   cf create-service sshfs Unlimited my-internal-content
    ```
 2. Bind the service instances to your application.
 
