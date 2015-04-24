@@ -33,4 +33,3 @@ To use mountie with a CF app that you've already started:
 By default, Mountie will mount all filesystems inside `/home/vcap/filesystems` in the application container.
 
 An application developer may customize this path by modifying the `mount.sh` script inside their `.profile.d` directory (between steps 4 and 5 above).
-
