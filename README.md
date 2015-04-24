@@ -2,7 +2,6 @@
 
 Mountie allows CF applications to mount one or more filesystems provided by the [cf-sshfs](https://github.com/pivotal-cf/cf-sshfs) service.
 
-
 To use mountie with a CF app that you've already started:
 
 1. Create service instances for your desired filesystems.
